@@ -3,18 +3,18 @@ import * as dynamoose from 'dynamoose';
 import { logger } from '../services/logger';
 import { DYNAMO_CONFIG } from '../config/constants';
 
-export default class DynamooseRouteController {
+export class DynamooseController {
 	private model: any;
 	private table: any;
 
 	constructor() {
 		AWS.config.update(DYNAMO_CONFIG);
-		dynamoose.setDefaults( { create: true }); //creates the table if it doesnt exists
+		dynamoose.setDefaults({ create: true }); //creates the table if it doesnt exists
 		this.model = dynamoose.model('Music', { Artist: String, SongTitle: String });
 	}
 
-	public get(): Promise {
-		new Promise((resolve, reject) => {
+	public get(event, context, callback): Promise<any> {
+		return new Promise((resolve, reject) => {
 			this.model.scan({/*filter*/ }, {/*options*/ }, (error, data) => {
 				if (error) return reject(error);
 				resolve(data);
@@ -22,9 +22,9 @@ export default class DynamooseRouteController {
 		});
 	}
 
-	public post(req: any): Promise {
-		new Promise((resolve, reject) => {
-			this.model.create(req.params, (error, data) => {
+	public post(event, context, callback): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this.model.create(event.params, (error, data) => {
 				if (error) return reject(error);
 				resolve(data);
 			});
