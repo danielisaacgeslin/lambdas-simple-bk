@@ -1,11 +1,22 @@
 import { DynamooseController } from './controllers/DynamooseController';
+import { ResponseHelper } from './services/ResponseHelper';
 
-const instance = new DynamooseController();
+export const getHandler = get;
+export const postHandler = post;
 
-export const get = (event, context, callback) => {
-    instance.get(event, context, callback).then(callback);
+const dmCtrl: DynamooseController = new DynamooseController();
+const rh: ResponseHelper = new ResponseHelper();
+
+function get(event, context, callback) {
+    dmCtrl.get(event, context, callback).then(
+        data => rh.success(data, event),
+        error => rh.error(error, event)
+    );
 }
 
-export const post = (event, context, callback) => {
-    instance.post(event, context, callback).then(callback);
+function post(event, context, callback) {
+    dmCtrl.post(event, context, callback).then(
+        data => rh.success(data, event),
+        error => rh.error(error, event)
+    );
 }
