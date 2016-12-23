@@ -9,24 +9,24 @@ export class DynamooseController {
 
 	constructor() {
 		AWS.config.update(DYNAMO_CONFIG);
-		dynamoose.setDefaults({ create: true }); //creates the table if it doesnt exists
+		dynamoose.setDefaults({ create: true }); //creates the table if it doesn't exists
 		this.model = dynamoose.model('Music', { Artist: String, SongTitle: String });
 	}
 
-	public get(event, context, callback): Promise<any> {
+	public get(event, context, callback): Promise<IMusic[]> {
 		return new Promise((resolve, reject) => {
-			this.model.scan({/*filter*/ }, {/*options*/ }, (error, data) => {
-				if (error) return reject(error);
-				resolve(data);
+			this.model.scan({/*filter*/ }, {/*options*/ }, (error, data: IMusic[]) => {
+				if (error) reject(error);
+				else resolve(data);
 			});
 		});
 	}
 
-	public post(event, context, callback): Promise<any> {
+	public post(event, context, callback): Promise<IMusic> {
 		return new Promise((resolve, reject) => {
-			this.model.create(event.params, (error, data) => {
-				if (error) return reject(error);
-				resolve(data);
+			this.model.create(event.params, (error, data: IMusic) => {
+				if (error) reject(error);
+				else resolve(data);
 			});
 		});
 	}
